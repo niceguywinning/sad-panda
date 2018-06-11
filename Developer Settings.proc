@@ -1,0 +1,31 @@
+! ***   Developer Settings.proc   ***
+! settings different developers may want to edit - 
+!   This file gets subprocced in during Compile.br processing.
+!   it is intended for developers to control their prefences for operations in Sad Panda [Pre]Compiler.
+
+!   ! r: from FileIO.ini - impliment to enable 
+!   		 ! table.field syntax which will get replaced with things like table$(pre_enum) and tableN(pre_enum).
+!   		 ! also change "open 'table',1,2"   to   fn_open('table',mat table$,mat tableN,mat form$,1,2)
+!   	defaultFileLayoutPath$='C:\ACS\Dev-5\Core\FileIO\Layout\' ! Path To Your File Layouts
+!   	fileLayoutExtension$='.fio'
+!   	promptOnFileCreate=1
+!   	! templatepath$="S:\Core\FileIO\Layout\Template\" ! Default Template Path
+!   ! /r
+execute 'config editor "c:\program files\notepad++\notepad++.exe"'
+hh=val(time$(1:2))
+if hh<=7 or hh>19 t le setenv('background_picture','[pandaPath]\asset\night.jpg') else le setenv('background_picture','[pandaPath]\asset\day.jpg')
+
+enablePlugIns=1
+
+
+setEnv('keyword-include','include:')
+setEnv('path-include','C:\ACS\Dev-5\^resource\')
+setEnv('ext-include','.brs')
+fnHasKeyAdd('[lineStartsWith]'&env$('keyword-include'))
+
+fnHasKeyAdd(chr$(9))
+
+setEnv('exe-examDiff','C:\Program Files\ExamDiff Pro\ExamDiff.exe')
+
+
+

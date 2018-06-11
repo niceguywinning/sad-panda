@@ -1,0 +1,9 @@
+drive b:,.,\,\
+gui off
+Option 26
+Style Keyword lower Expressions lower labels upper Indent 2 0
+FileNames Mixed_Case
+Font Courier New
+WorkPath %Temp%
+WBServer :%temp%
+
