@@ -31,13 +31,56 @@ def fn_applySrep(fileName$*256,mat srepFrom$,mat srepTo$; ___,hIn,hOut,line$*800
 	do
 		lin #hIn: line$ eof AtEoF
 		for srepItem=1 to udim(mat srepFrom$)
-			line$=srep$(line$,srepFrom$(srepItem),srepTo$(srepItem))
+			line$=fn_srepExcludeStringLiterals$(line$,srepFrom$(srepItem),srepTo$(srepItem))
+			! line$=srep$(line$,srepFrom$(srepItem),srepTo$(srepItem))
 		nex srepItem
 		pr #hOut: line$
 	loop
 	AtEoF: !
 	fnCloseInAndOut(hIn,hOut)
 fn
+def fn_srepExcludeStringLiterals$*1024(in$*1024,srepFrom$,srepTo$; ___,return$*1024,x,map$*1024,posI,inLen)
+	inLen=len(in$)
+	map$=rpt$(' ',inLen)
+	return$=in$
+	for x=1 to inLen
+		if in$(x:X)='"' and ~inQuoteS then
+			! map$(x:x)='x' ! '"'
+			if inQuoteD=0 then
+				inQuoteD=1
+			else if ~inQuoteS then
+				inQuoteD=0
+				closeingQuoteD=1
+			end if
+		else if in$(x:x)="'" and ~inQuoteD then
+			! map$(x:x)='x' ! '"'
+			if inQuoteS=0 then
+				inQuoteS=1
+			else if ~inQuoteD then
+				inQuoteS=0
+				closeingQuoteS=1
+			end if
+		end if
+		if inQuoteD or closeingQuoteD then
+			map$(x:x)='x' ! '"'
+			closeingQuoteD=0
+		else if inQuoteS or closeingQuoteS then
+			map$(x:x)='x' ! "'"
+			closeingQuoteS=0
+		else 
+			map$(x:x)='_'
+		end if
+	nex x
+	posI=0
+	posI=srch(map$,'_',posI)
+	do while posI<=inLen and posI>0
+		posI=pos(map$,'_',posI+1) ! find next replaceable character
+		posX=pos(map$,'x',posI+1) ! find next end of replaceable characters
+		if posX>0 then posX-=1 else posX=inLen
+		return$(posI:posX)=srep$(in$(posI:posX),srepFrom$,srepTo$)
+	loop
+	fn_srepExcludeStringLiterals$=return$
+fnend
 ErrorHandler: ! r:
 	! exec 'list -'&str$(line)
 	pr bell;'~o~   ~o~   ~o~   ~o~   ~o~   ~o~   ~o~   ~o~   Error   ~o~   ~o~   ~o~   ~o~   ~o~   ~o~   ~o~   ~o~'
